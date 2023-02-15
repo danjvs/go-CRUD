@@ -2,9 +2,12 @@ package controller
 
 import (
 	"fmt"
+	"log"
+	"net/http"
 
-	rest_err "github.com/danjvs/go-CRUD/src/configuration"
+	"github.com/danjvs/go-CRUD/src/configuration/validation"
 	"github.com/danjvs/go-CRUD/src/controller/model/request"
+	"github.com/danjvs/go-CRUD/src/controller/model/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,16 +18,27 @@ func FindUserByEmail(context *gin.Context) {
 }
 
 func CreateUser(context *gin.Context) {
-
+	log.Println("Init create user controller")
 	var UserRequest request.UserRequest
 
 	if err := context.ShouldBindJSON(&UserRequest); err != nil {
+		log.Printf("Error trying to marshal object, error=%s", err.Error())
+		errRest := validation.ValidateUserError(err)
 
-		restErr := rest_err.NewBadRequestError((fmt.Sprintf("There are some incorrect filds, error=%s", err.Error())))
-
-		context.JSON(restErr.Code, restErr)
+		context.JSON(errRest.Code, errRest)
 		return
 	}
+
+	fmt.Println(UserRequest)
+	response := response.UserResponse{
+		ID:    "01",
+		Email: UserRequest.Email,
+		Name:  UserRequest.Name,
+		Age:   UserRequest.Age,
+	}
+
+	context.JSON(http.StatusOK, response)
+
 }
 
 func DeleteUser(context *gin.Context) {
