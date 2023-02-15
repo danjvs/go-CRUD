@@ -2,13 +2,14 @@ package controller
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
+	"github.com/danjvs/go-CRUD/src/configuration/logger"
 	"github.com/danjvs/go-CRUD/src/configuration/validation"
 	"github.com/danjvs/go-CRUD/src/controller/model/request"
 	"github.com/danjvs/go-CRUD/src/controller/model/response"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 func FindUserById(context *gin.Context) {
@@ -18,11 +19,11 @@ func FindUserByEmail(context *gin.Context) {
 }
 
 func CreateUser(context *gin.Context) {
-	log.Println("Init create user controller")
+	logger.Info("Init create user controller", zap.String("Journey", "create user"))
 	var UserRequest request.UserRequest
 
 	if err := context.ShouldBindJSON(&UserRequest); err != nil {
-		log.Printf("Error trying to marshal object, error=%s", err.Error())
+		logger.Error("Error trying to validate user info", err, zap.String("Journey", "create user"))
 		errRest := validation.ValidateUserError(err)
 
 		context.JSON(errRest.Code, errRest)
@@ -37,6 +38,7 @@ func CreateUser(context *gin.Context) {
 		Age:   UserRequest.Age,
 	}
 
+	logger.Info("User created successfully", zap.String("Journey", "create user"))
 	context.JSON(http.StatusOK, response)
 
 }
