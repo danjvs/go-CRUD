@@ -1,15 +1,11 @@
 package routes
 
 import (
-	controller "github.com/danjvs/go-CRUD/src/controller/user"
+	controller "github.com/danjvs/go-CRUD/src/controller"
 	"github.com/gin-gonic/gin"
 )
 
-func InitRoutes(route *gin.RouterGroup) {
+func InitRoutes(route *gin.RouterGroup, userController controller.UserControllerInterface) {
 
-	route.GET("/user/:userId", controller.FindUserById)
-	route.GET("/user/email/:userEmail", controller.FindUserByEmail)
-	route.POST("/user", controller.CreateUser)
-	route.PUT("/user/:userId", controller.UpdateUser)
-	route.DELETE("/user/:userId", controller.DeleteUser)
+	route.POST("/user", userController.CreateUser)
 }
