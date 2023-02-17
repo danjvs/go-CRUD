@@ -31,12 +31,12 @@ func main() {
 		return
 	}
 
+	//userController := initDependencies(database)
 	repo := repository.NewUserRepository(database)
 	service := service.NewUserDomainService(repo)
 	userController := controller.NewUserControllerInterface(service)
 
 	router := gin.Default()
-
 	routes.InitRoutes(&router.RouterGroup, userController)
 
 	if err := router.Run(":8080"); err != nil {

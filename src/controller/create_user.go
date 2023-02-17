@@ -13,13 +13,16 @@ import (
 )
 
 func (uc *userControllerInterface) CreateUser(c *gin.Context) {
-	logger.Info("Init CreateUser controller",
+	logger.Info(
+		"Init CreateUser controller",
 		zap.String("journey", "createUser"),
 	)
 	var userRequest request.UserRequest
 
 	if err := c.ShouldBindJSON(&userRequest); err != nil {
-		logger.Error("Error trying to validate user info", err,
+		logger.Error(
+			"Error trying to validate user info",
+			err,
 			zap.String("journey", "createUser"))
 		errRest := validation.ValidateUserError(err)
 
@@ -35,11 +38,17 @@ func (uc *userControllerInterface) CreateUser(c *gin.Context) {
 	)
 	domainResult, err := uc.service.CreateUser(domain)
 	if err != nil {
+		logger.Error(
+			"Error trying to call CreateUser service",
+			err,
+			zap.String("Journey", "CreateUser"))
 		c.JSON(err.Code, err)
 		return
 	}
 
-	logger.Info("User created successfully",
+	logger.Info(
+		"CreateUser controller executed successfully",
+		zap.String("userId", domain.GetID()),
 		zap.String("journey", "createUser"))
 
 	c.JSON(http.StatusOK, view.ConvertDomainToResponse(
